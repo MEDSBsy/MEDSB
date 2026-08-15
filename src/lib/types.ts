@@ -58,3 +58,21 @@ export type SubmissionMapRow = {
   lat: number;
   lng: number;
 };
+
+export type ReportCategory = "flood" | "fire" | "earthquake" | "building" | "road" | "medical" | "other";
+export type ReportStatus = "pending" | "verified" | "rejected" | "resolved";
+export type PublicReportRow = {
+  id: string;
+  category: ReportCategory;
+  description: string;
+  reporter_name: string | null;
+  reporter_phone: string | null;
+  status: ReportStatus;
+  created_at: string;
+  reviewed_at: string | null;
+  review_note: string | null;
+  location_accuracy_m: number | null;
+  photo_path: string | null;
+  lat: number;
+  lng: number;
+};

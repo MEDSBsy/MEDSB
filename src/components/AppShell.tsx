@@ -33,6 +33,7 @@ export default function AppShell({
     { href: "/forms", label: t.forms, show: true },
     { href: "/submissions", label: t.submissions, show: true },
     { href: "/map", label: t.map, show: true },
+    { href: "/reports", label: t.publicReports, show: profile.role !== "collector" },
     { href: "/projects", label: t.projects, show: isAdmin },
     { href: "/users", label: t.users, show: isAdmin },
   ].filter((n) => n.show);
