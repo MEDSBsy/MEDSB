@@ -7,6 +7,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { switchLocale, useI18n } from "@/components/I18nProvider";
 import { branding } from "@/lib/branding";
+import NotificationBell from "@/components/NotificationBell";
 
 export type Profile = {
   id: string;
@@ -84,6 +85,7 @@ export default function AppShell({
           </div>
           <div className="hidden md:block">{navLinks}</div>
           <div className="flex items-center gap-2 text-sm">
+            <NotificationBell />
             <button className="rounded-lg px-2 py-1 text-white/80 hover:bg-white/10" onClick={() => switchLocale(locale)}>
               {t.language}
             </button>

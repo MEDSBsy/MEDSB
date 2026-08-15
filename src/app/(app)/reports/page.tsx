@@ -4,6 +4,8 @@ import { useEffect, useMemo, useState } from "react";
 import dynamic from "next/dynamic";
 import { createClient } from "@/lib/supabase/client";
 import { useI18n } from "@/components/I18nProvider";
+import { toGeoJSON } from "@/components/SubmissionsMap";
+import { toKML, toShapefileZip, download } from "@/lib/geoexport";
 import type { PublicReportRow, ReportCategory, ReportStatus, SubmissionMapRow } from "@/lib/types";
 
 const SubmissionsMap = dynamic(() => import("@/components/SubmissionsMap"), { ssr: false });
@@ -58,6 +60,15 @@ export default function ReportsPage() {
     setSelected(null); load();
   }
 
+  async function exportAs(fmt: "geojson" | "kml" | "shp") {
+    const fc = toGeoJSON(mapRows);
+    fc.features.forEach((f, i) => { const r = filtered[i]; f.properties = { id: r.id, category: r.category, status: r.status, created_at: r.created_at, description: r.description, reporter_name: r.reporter_name ?? "", reporter_phone: r.reporter_phone ?? "", accuracy_m: r.location_accuracy_m }; });
+    const base = `reports-${new Date().toISOString().slice(0, 10)}`;
+    if (fmt === "geojson") download(new Blob([JSON.stringify(fc, null, 2)], { type: "application/geo+json" }), `${base}.geojson`);
+    else if (fmt === "kml") download(new Blob([toKML(fc, base)], { type: "application/vnd.google-earth.kml+xml" }), `${base}.kml`);
+    else download(await toShapefileZip(fc, base), `${base}-shp.zip`);
+  }
+
   const publicLink = typeof window !== "undefined" ? `${window.location.origin}/report` : "/report";
 
   return (
@@ -69,6 +80,13 @@ export default function ReportsPage() {
           {(Object.keys(statusLabel) as ReportStatus[]).map((k) => <option key={k} value={k}>{statusLabel[k]}</option>)}
         </select>
         <span className="text-sm text-gray-500">{filtered.length}</span>
+        <select onChange={(e) => { if (e.target.value) { exportAs(e.target.value as "geojson" | "kml" | "shp"); e.target.value = ""; } }} disabled={filtered.length === 0}
+          className="rounded-lg bg-[var(--brand)] px-3 py-1.5 text-sm text-white disabled:opacity-40" defaultValue="">
+          <option value="" disabled>{t.export}</option>
+          <option value="geojson">GeoJSON</option>
+          <option value="kml">KML</option>
+          <option value="shp">Shapefile (.zip)</option>
+        </select>
         <button onClick={() => navigator.clipboard.writeText(publicLink)} className="rounded-lg border px-3 py-1.5 text-xs" title={publicLink}>
           {t.shareReportLink} ⧉
         </button>

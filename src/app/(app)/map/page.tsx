@@ -6,6 +6,7 @@ import { createClient } from "@/lib/supabase/client";
 import { useI18n } from "@/components/I18nProvider";
 import type { SubmissionMapRow } from "@/lib/types";
 import { toGeoJSON, STATUS_COLORS } from "@/components/SubmissionsMap";
+import { toKML, toShapefileZip, download } from "@/lib/geoexport";
 
 const SubmissionsMap = dynamic(() => import("@/components/SubmissionsMap"), { ssr: false });
 
@@ -41,13 +42,12 @@ export default function MapPage() {
     [rows, formFilter, statusFilter]
   );
 
-  function exportGeoJson() {
-    const blob = new Blob([JSON.stringify(toGeoJSON(filtered), null, 2)], { type: "application/geo+json" });
-    const a = document.createElement("a");
-    a.href = URL.createObjectURL(blob);
-    a.download = `submissions-${new Date().toISOString().slice(0, 10)}.geojson`;
-    a.click();
-    URL.revokeObjectURL(a.href);
+  async function exportAs(fmt: "geojson" | "kml" | "shp") {
+    const fc = toGeoJSON(filtered);
+    const base = `submissions-${new Date().toISOString().slice(0, 10)}`;
+    if (fmt === "geojson") download(new Blob([JSON.stringify(fc, null, 2)], { type: "application/geo+json" }), `${base}.geojson`);
+    else if (fmt === "kml") download(new Blob([toKML(fc, base)], { type: "application/vnd.google-earth.kml+xml" }), `${base}.kml`);
+    else download(await toShapefileZip(fc, base), `${base}-shp.zip`);
   }
 
   const statusLabels: Record<string, string> = { submitted: t.submitted, approved: t.approved, rejected: t.rejected };
@@ -68,9 +68,13 @@ export default function MapPage() {
             <option key={k} value={k}>{v}</option>
           ))}
         </select>
-        <button onClick={exportGeoJson} disabled={filtered.length === 0} className="rounded-lg bg-[var(--brand)] px-3 py-1.5 text-sm text-white disabled:opacity-40">
-          {t.exportGeoJson}
-        </button>
+        <select onChange={(e) => { if (e.target.value) { exportAs(e.target.value as "geojson" | "kml" | "shp"); e.target.value = ""; } }} disabled={filtered.length === 0}
+          className="rounded-lg bg-[var(--brand)] px-3 py-1.5 text-sm text-white disabled:opacity-40" defaultValue="">
+          <option value="" disabled>{t.export}</option>
+          <option value="geojson">GeoJSON</option>
+          <option value="kml">KML (Google Earth)</option>
+          <option value="shp">Shapefile (.zip)</option>
+        </select>
         <span className="text-sm text-gray-500">{filtered.length} {t.points}</span>
       </div>
 
