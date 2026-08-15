@@ -11,17 +11,38 @@
   --brand-accent: #c9a227; /* accent (gold) */
   --surface: #f6f8f9;
   --ink: #17262b;
-  --font-sans: "Segoe UI", Tahoma, Arial, sans-serif;
+  --font-sans: var(--font-qomra), "Segoe UI", Tahoma, Arial, sans-serif;
 }
 
 body {
   background: var(--surface);
   color: var(--ink);
   font-family: var(--font-sans);
+  font-weight: 400;
+  -webkit-font-smoothing: antialiased;
 }
 
+/* ===== Typographic hierarchy (ITF Qomra weights) =====
+   300 Light   – secondary/helper text
+   400 Regular – body
+   500 Medium  – labels, nav, table headers
+   700 Bold    – headings, buttons
+   900 Black   – page titles, KPI numbers                              */
+h1 { @apply font-black tracking-tight; }
+h2 { @apply font-bold; }
+h3 { @apply font-bold; }
+label, th { @apply font-medium; }
+nav a { @apply font-medium; }
+button { @apply font-bold; }
+.text-muted { @apply text-gray-500 font-light; }
+small, .text-xs { font-weight: 300; }
+strong, b { font-weight: 700; }
+input, textarea, select { font-family: inherit; font-weight: 400; }
+.maplibregl-popup-content { font-family: var(--font-sans); }
+input::placeholder, textarea::placeholder { font-weight: 300; }
+
 .btn {
-  @apply inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-semibold transition disabled:opacity-50;
+  @apply inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-bold transition disabled:opacity-50;
 }
 .btn-primary {
   @apply btn bg-brand text-white hover:bg-brand-dark;

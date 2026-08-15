@@ -76,8 +76,8 @@ export default function PublicReportPage() {
             {locale === "ar" ? "English" : "العربية"}
           </button>
         </div>
-        <h1 className="text-lg font-semibold">{t.publicReport}</h1>
-        <p className="mb-4 text-sm text-gray-600">{t.reportIntro}</p>
+        <h1 className="text-xl font-black text-[var(--brand-dark)]">{t.publicReport}</h1>
+        <p className="mb-4 text-sm font-light text-gray-600">{t.reportIntro}</p>
 
         {done ? (
           <div className="rounded-xl bg-green-50 p-4 text-green-800">
