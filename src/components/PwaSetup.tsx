@@ -31,7 +31,7 @@ export default function PwaSetup() {
 
   if (online && pending === 0) return null;
   return (
-    <div className={`fixed bottom-3 start-3 z-50 rounded-full px-3 py-1.5 text-xs shadow ${online ? "bg-amber-500 text-white" : "bg-gray-800 text-white"}`}>
+    <div className={`fixed bottom-3 start-3 z-50 rounded-full px-3 py-1.5 text-xs shadow ${online ? "bg-wheat-700 text-white" : "bg-charcoal-900 text-white"}`}>
       {!online ? t.offline : ""} {pending > 0 ? `${t.pendingSync}: ${pending}` : ""}
       {online && pending > 0 && <button onClick={sync} className="ms-2 underline">{t.syncNow}</button>}
     </div>

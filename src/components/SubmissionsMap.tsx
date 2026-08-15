@@ -7,9 +7,9 @@ import "maplibre-gl/dist/maplibre-gl.css";
 import type { SubmissionMapRow } from "@/lib/types";
 
 export const STATUS_COLORS: Record<SubmissionMapRow["status"], string> = {
-  submitted: "#f59e0b",
-  approved: "#16a34a",
-  rejected: "#dc2626",
+  submitted: "#b9a779",
+  approved: "#428177",
+  rejected: "#6b1f2a",
 };
 
 export function toGeoJSON(rows: SubmissionMapRow[]): GeoJSON.FeatureCollection<GeoJSON.Point> {
@@ -78,7 +78,7 @@ export default function SubmissionsMap({
         type: "circle",
         source: "subs",
         filter: ["has", "point_count"],
-        paint: { "circle-color": "#1d4ed8", "circle-opacity": 0.85, "circle-radius": ["step", ["get", "point_count"], 16, 20, 22, 100, 30] },
+        paint: { "circle-color": "#054239", "circle-opacity": 0.85, "circle-radius": ["step", ["get", "point_count"], 16, 20, 22, 100, 30] },
       });
       map.addLayer({
         id: "cluster-count",
@@ -121,7 +121,7 @@ export default function SubmissionsMap({
             ${escapeHtml(labels.status[p.status] ?? p.status)} · ${new Date(p.submitted_at).toLocaleDateString()}
           </div>
           ${p.submitted_by_name ? `<div style="font-size:12px;color:#555">${escapeHtml(p.submitted_by_name)}</div>` : ""}
-          <button data-id="${p.id}" style="margin-top:6px;font-size:12px;color:#1d4ed8;text-decoration:underline;background:none;border:0;padding:0;cursor:pointer">${escapeHtml(labels.details)}</button>
+          <button data-id="${p.id}" style="margin-top:6px;font-size:12px;color:#054239;text-decoration:underline;background:none;border:0;padding:0;cursor:pointer">${escapeHtml(labels.details)}</button>
         </div>`;
         const popup = new maplibregl.Popup({ offset: 10 }).setLngLat(coords).setHTML(html).addTo(map);
         popup.getElement().querySelector("button")?.addEventListener("click", () => onSelect?.(p.id));

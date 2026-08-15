@@ -194,7 +194,7 @@ export default function FormBuilderPage() {
         <button className="btn-primary" onClick={save} disabled={busy}>
           {busy ? t.loading : t.save}
         </button>
-        {msg && <p className="text-sm text-red-700">{msg}</p>}
+        {msg && <p className="text-sm text-umber-500">{msg}</p>}
       </div>
     </div>
   );

@@ -68,7 +68,7 @@ export default function LoginForm() {
             <label className="label">{t.password}</label>
             <input className="input" type="password" dir="ltr" value={password} onChange={(e) => setPassword(e.target.value)} required minLength={6} />
           </div>
-          {msg && <p className="text-sm text-red-700">{msg}</p>}
+          {msg && <p className="text-sm text-umber-500">{msg}</p>}
           <button className="btn-primary w-full" disabled={busy}>
             {busy ? t.loading : mode === "login" ? t.login : t.signup}
           </button>

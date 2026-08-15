@@ -69,7 +69,7 @@ export default function UsersPage() {
             <div className="flex flex-wrap items-center justify-between gap-3">
               <div className="flex items-center gap-3">
                 <span className="font-semibold">{u.full_name || "—"}</span>
-                <span className={`badge ${u.is_active ? "bg-green-100 text-green-800" : "bg-red-100 text-red-700"}`}>
+                <span className={`badge ${u.is_active ? "status-approved" : "bg-red-100 text-umber-500"}`}>
                   {u.is_active ? t.active : t.inactive}
                 </span>
               </div>

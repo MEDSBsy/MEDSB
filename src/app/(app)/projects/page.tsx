@@ -53,7 +53,7 @@ export default function ProjectsPage() {
           + {t.newProject}
         </button>
       </div>
-      {msg && <p className="text-sm text-red-700">{msg}</p>}
+      {msg && <p className="text-sm text-umber-500">{msg}</p>}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {projects.map((p) => (
           <div key={p.id} className="card">

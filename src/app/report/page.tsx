@@ -80,7 +80,7 @@ export default function PublicReportPage() {
         <p className="mb-4 text-sm font-light text-gray-600">{t.reportIntro}</p>
 
         {done ? (
-          <div className="rounded-xl bg-green-50 p-4 text-green-800">
+          <div className="rounded-xl bg-wheat-100 p-4 text-forest-900">
             <p>{t.reportSent}</p>
             <button onClick={reset} className="mt-3 rounded-lg bg-[var(--brand)] px-4 py-2 text-sm text-white">{t.newReport}</button>
           </div>
@@ -107,7 +107,7 @@ export default function PublicReportPage() {
                 className="rounded-lg border border-[var(--brand)] px-3 py-2 text-sm text-[var(--brand)] disabled:opacity-50">
                 {locating ? t.locating : t.getLocation}
               </button>
-              {loc && <span className="text-xs text-green-700">✓ {t.locationSet} ({loc.lat.toFixed(5)}, {loc.lng.toFixed(5)})</span>}
+              {loc && <span className="text-xs text-forest-700">✓ {t.locationSet} ({loc.lat.toFixed(5)}, {loc.lng.toFixed(5)})</span>}
             </div>
             <label className="block text-sm">
               <span className="mb-1 block font-medium">{t.attachPhoto}</span>
@@ -117,7 +117,7 @@ export default function PublicReportPage() {
               <input placeholder={t.yourName} value={name} onChange={(e) => setName(e.target.value)} className="rounded-lg border px-3 py-2 text-sm" />
               <input placeholder={t.yourPhone} value={phone} onChange={(e) => setPhone(e.target.value)} className="rounded-lg border px-3 py-2 text-sm" dir="ltr" />
             </div>
-            {msg && <p className="text-sm text-red-600">{msg}</p>}
+            {msg && <p className="text-sm text-umber-500">{msg}</p>}
             <button type="submit" disabled={busy} className="w-full rounded-lg bg-[var(--brand)] py-2.5 font-medium text-white disabled:opacity-50">
               {busy ? "..." : t.sendReport}
             </button>

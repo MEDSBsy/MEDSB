@@ -119,7 +119,7 @@ export default function FillFormPage() {
         {form.schema.fields.map((f) => (
           <div key={f.key}>
             <label className="label">
-              {f.label} {f.required && <span className="text-red-600">*</span>}
+              {f.label} {f.required && <span className="text-umber-500">*</span>}
             </label>
             {f.type === "text" && (
               <input className="input" value={(values[f.key] as string) ?? ""} onChange={(e) => setVal(f.key, e.target.value)} />
@@ -180,7 +180,7 @@ export default function FillFormPage() {
                   onChange={(e) => e.target.files?.[0] && uploadPhoto(f, e.target.files[0])}
                 />
                 {typeof values[f.key] === "string" && (
-                  <p className="mt-1 text-xs text-green-700">✓ {values[f.key] as string}</p>
+                  <p className="mt-1 text-xs text-forest-700">✓ {values[f.key] as string}</p>
                 )}
               </div>
             )}
@@ -190,7 +190,7 @@ export default function FillFormPage() {
                   📍 {t.captureLocation}
                 </button>
                 {values[f.key] != null && (
-                  <span className="text-xs text-green-700">
+                  <span className="text-xs text-forest-700">
                     ✓ {t.locationCaptured} (
                     {(values[f.key] as { lat: number }).lat.toFixed(5)},{" "}
                     {(values[f.key] as { lng: number }).lng.toFixed(5)})
@@ -200,8 +200,8 @@ export default function FillFormPage() {
             )}
           </div>
         ))}
-        {msg && <p className="text-sm text-red-700">{msg}</p>}
-        {ok && <p className="text-sm font-semibold text-green-700">{t.sentSuccess} ✓</p>}
+        {msg && <p className="text-sm text-umber-500">{msg}</p>}
+        {ok && <p className="text-sm font-semibold text-forest-700">{t.sentSuccess} ✓</p>}
         <button className="btn-primary w-full" onClick={submit} disabled={busy || ok}>
           {busy ? t.loading : t.submit}
         </button>

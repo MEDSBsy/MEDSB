@@ -113,9 +113,9 @@ export default function ReportsPage() {
               {photoUrl && <img src={photoUrl} alt={t.photo} className="mt-3 max-h-64 rounded-lg" />}
               <textarea value={note} onChange={(e) => setNote(e.target.value)} placeholder={t.reviewNote} rows={2} className="mt-3 w-full rounded-lg border px-3 py-2 text-sm" />
               <div className="mt-2 flex flex-wrap gap-2">
-                <button onClick={() => setStatus("verified")} className="rounded-lg bg-green-600 px-3 py-1.5 text-sm text-white">{t.verify}</button>
-                <button onClick={() => setStatus("resolved")} className="rounded-lg bg-blue-600 px-3 py-1.5 text-sm text-white">{t.resolve}</button>
-                <button onClick={() => setStatus("rejected")} className="rounded-lg bg-red-600 px-3 py-1.5 text-sm text-white">{t.reject}</button>
+                <button onClick={() => setStatus("verified")} className="rounded-lg bg-forest-400 px-3 py-1.5 text-sm text-white">{t.verify}</button>
+                <button onClick={() => setStatus("resolved")} className="rounded-lg bg-forest-700 px-3 py-1.5 text-sm text-white">{t.resolve}</button>
+                <button onClick={() => setStatus("rejected")} className="rounded-lg bg-umber-500 px-3 py-1.5 text-sm text-white">{t.reject}</button>
               </div>
             </div>
           ) : (

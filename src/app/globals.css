@@ -2,15 +2,29 @@
 @tailwind components;
 @tailwind utilities;
 
-/* ===== Ministry visual identity =====
-   Replace these values with the official palette when provided. */
+/* ===== Ministry visual identity — official palette =====
+   Charcoal:     #ffffff  #3d3a3b  #161616
+   Deep Umber:   #6b1f2a  #4a151e  #260f14
+   Golden Wheat: #edebe0  #b9a779  #988561
+   Forest:       #428177  #054239  #002623                              */
 :root {
-  --brand: #0f4c5c;        /* primary */
-  --brand-dark: #0a3540;   /* header / emphasis */
-  --brand-light: #e6f0f2;  /* subtle backgrounds */
-  --brand-accent: #c9a227; /* accent (gold) */
-  --surface: #f6f8f9;
-  --ink: #17262b;
+  /* Forest = primary */
+  --brand:        #054239;
+  --brand-dark:   #002623;
+  --brand-mid:    #428177;
+  --brand-light:  #edebe0;   /* Golden Wheat 100 as soft surface */
+  /* Golden Wheat = accent */
+  --brand-accent: #b9a779;
+  --brand-accent-dark: #988561;
+  /* Deep Umber = danger / alerts */
+  --danger:       #6b1f2a;
+  --danger-dark:  #4a151e;
+  --danger-deep:  #260f14;
+  /* Charcoal = neutrals */
+  --ink:          #161616;
+  --ink-2:        #3d3a3b;
+  --surface:      #f7f6f2;   /* warm off-white derived from Golden Wheat 100 */
+  --card:         #ffffff;
   --font-sans: var(--font-qomra), "Segoe UI", Tahoma, Arial, sans-serif;
 }
 
@@ -51,13 +65,21 @@ input::placeholder, textarea::placeholder { font-weight: 300; }
   @apply btn border border-brand text-brand hover:bg-brand-light;
 }
 .btn-danger {
-  @apply btn border border-red-600 text-red-700 hover:bg-red-50;
+  @apply btn border text-white;
+  background: var(--danger); border-color: var(--danger);
 }
+.btn-danger:hover { background: var(--danger-dark); }
+.btn-accent {
+  @apply btn text-white;
+  background: var(--brand-accent-dark);
+}
+.btn-accent:hover { background: #7f6f4e; }
 .card {
-  @apply rounded-xl border border-gray-200 bg-white p-4 shadow-sm;
+  @apply rounded-xl border p-4 shadow-sm;
+  background: var(--card); border-color: #e6e2d6;
 }
 .input {
-  @apply w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-brand focus:outline-none focus:ring-1 focus:ring-brand;
+  @apply w-full rounded-lg border border-[#d9d4c4] px-3 py-2 text-sm focus:border-brand focus:outline-none focus:ring-1 focus:ring-brand;
 }
 .label {
   @apply mb-1 block text-sm font-medium text-gray-700;
@@ -65,3 +87,9 @@ input::placeholder, textarea::placeholder { font-weight: 300; }
 .badge {
   @apply inline-block rounded-full px-2.5 py-0.5 text-xs font-semibold;
 }
+
+
+/* Status colours aligned to identity */
+.status-pending  { background: #f3efe2; color: #6b5a2c; border: 1px solid #b9a779; }
+.status-approved { background: #e3ede9; color: #054239; border: 1px solid #428177; }
+.status-rejected { background: #f2e4e6; color: #4a151e; border: 1px solid #6b1f2a; }

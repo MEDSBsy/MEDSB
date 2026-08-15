@@ -14,7 +14,7 @@ export const metadata: Metadata = {
   appleWebApp: { capable: true, title: "MEDSB" },
 };
 
-export const viewport = { themeColor: "#0f4c5c" };
+export const viewport = { themeColor: "#054239" };
 
 export default async function RootLayout({
   children,

@@ -45,9 +45,9 @@ export default function FormsPage() {
 
   const statusBadge = (s: FormRow["status"]) => {
     const map = {
-      draft: "bg-gray-100 text-gray-700",
-      published: "bg-green-100 text-green-800",
-      closed: "bg-red-100 text-red-700",
+      draft: "bg-wheat-100 text-charcoal-700",
+      published: "status-approved",
+      closed: "bg-red-100 text-umber-500",
     };
     return <span className={`badge ${map[s]}`}>{t[s === "closed" ? "closed" : s]}</span>;
   };
