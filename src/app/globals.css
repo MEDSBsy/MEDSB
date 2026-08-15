@@ -1,0 +1,46 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ===== Ministry visual identity =====
+   Replace these values with the official palette when provided. */
+:root {
+  --brand: #0f4c5c;        /* primary */
+  --brand-dark: #0a3540;   /* header / emphasis */
+  --brand-light: #e6f0f2;  /* subtle backgrounds */
+  --brand-accent: #c9a227; /* accent (gold) */
+  --surface: #f6f8f9;
+  --ink: #17262b;
+  --font-sans: "Segoe UI", Tahoma, Arial, sans-serif;
+}
+
+body {
+  background: var(--surface);
+  color: var(--ink);
+  font-family: var(--font-sans);
+}
+
+.btn {
+  @apply inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-semibold transition disabled:opacity-50;
+}
+.btn-primary {
+  @apply btn bg-brand text-white hover:bg-brand-dark;
+}
+.btn-outline {
+  @apply btn border border-brand text-brand hover:bg-brand-light;
+}
+.btn-danger {
+  @apply btn border border-red-600 text-red-700 hover:bg-red-50;
+}
+.card {
+  @apply rounded-xl border border-gray-200 bg-white p-4 shadow-sm;
+}
+.input {
+  @apply w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-brand focus:outline-none focus:ring-1 focus:ring-brand;
+}
+.label {
+  @apply mb-1 block text-sm font-medium text-gray-700;
+}
+.badge {
+  @apply inline-block rounded-full px-2.5 py-0.5 text-xs font-semibold;
+}
