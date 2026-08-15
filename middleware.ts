@@ -1,42 +1,24 @@
-import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
-export async function middleware(request: NextRequest) {
-  let response = NextResponse.next({ request });
+// Edge-safe middleware: only checks for the Supabase auth cookie.
+// Real session validation happens in server components via createClient().
+function hasSupabaseSession(request: NextRequest): boolean {
+  return request.cookies
+    .getAll()
+    .some((c) => c.name.startsWith("sb-") && c.name.includes("-auth-token") && c.value.length > 0);
+}
 
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      cookies: {
-        getAll() {
-          return request.cookies.getAll();
-        },
-        setAll(cookiesToSet: { name: string; value: string; options?: object }[]) {
-          cookiesToSet.forEach(({ name, value }) =>
-            request.cookies.set(name, value)
-          );
-          response = NextResponse.next({ request });
-          cookiesToSet.forEach(({ name, value, options }) =>
-            response.cookies.set(name, value, options)
-          );
-        },
-      },
-    }
-  );
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
+export function middleware(request: NextRequest) {
+  const loggedIn = hasSupabaseSession(request);
   const isAuthPage = request.nextUrl.pathname.startsWith("/login");
-  if (!user && !isAuthPage) {
+
+  if (!loggedIn && !isAuthPage) {
     return NextResponse.redirect(new URL("/login", request.url));
   }
-  if (user && isAuthPage) {
+  if (loggedIn && isAuthPage) {
     return NextResponse.redirect(new URL("/", request.url));
   }
-  return response;
+  return NextResponse.next();
 }
 
 export const config = {
