@@ -43,3 +43,18 @@ export type SubmissionRow = {
   submitted_by: string | null;
   submitted_at: string;
 };
+
+export type SubmissionMapRow = {
+  id: string;
+  form_id: string;
+  form_title: string;
+  project_id: string;
+  project_name: string;
+  status: "submitted" | "approved" | "rejected";
+  submitted_at: string;
+  submitted_by_name: string | null;
+  location_accuracy_m: number | null;
+  data: Record<string, unknown>;
+  lat: number;
+  lng: number;
+};
