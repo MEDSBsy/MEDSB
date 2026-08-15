@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import { outbox, fileToB64, syncOutbox } from "@/lib/offline";
 import { useI18n } from "@/components/I18nProvider";
 import type { FormRow, FormField } from "@/lib/types";
 
@@ -30,12 +31,21 @@ export default function FillFormPage() {
     setValues((prev) => ({ ...prev, [key]: v }));
   }
 
+  const [pendingPhotos, setPendingPhotos] = useState<Record<string, File>>({});
   async function uploadPhoto(field: FormField, file: File) {
+    if (!navigator.onLine) {
+      setPendingPhotos((p) => ({ ...p, [field.key]: file }));
+      setVal(field.key, `(offline) ${file.name}`);
+      return;
+    }
     setMsg(t.uploading);
     const path = `${params.id}/${crypto.randomUUID()}-${file.name}`;
     const { error } = await supabase.storage.from("attachments").upload(path, file);
-    if (error) setMsg(error.message);
-    else {
+    if (error) {
+      setPendingPhotos((p) => ({ ...p, [field.key]: file }));
+      setVal(field.key, `(offline) ${file.name}`);
+      setMsg("");
+    } else {
       setVal(field.key, path);
       setMsg("");
     }
@@ -65,24 +75,38 @@ export default function FillFormPage() {
     }
     setBusy(true);
     setMsg("");
-    const { data: userData } = await supabase.auth.getUser();
     const gpsField = form.schema.fields.find((f) => f.type === "gps");
     const gps = gpsField ? (values[gpsField.key] as { lat: number; lng: number; accuracy: number } | undefined) : undefined;
-    const { error } = await supabase.from("submissions").insert({
-      form_id: form.id,
-      form_version: form.version,
-      data: values,
-      submitted_by: userData.user!.id,
-      client_id: crypto.randomUUID(),
-      location_accuracy_m: gps?.accuracy ?? null,
-      device_info: { ua: navigator.userAgent },
-    });
-    setBusy(false);
-    if (error) setMsg(error.message);
-    else {
-      setOk(true);
-      setTimeout(() => router.push("/submissions"), 1200);
+    const clientId = crypto.randomUUID();
+    const photos = await Promise.all(
+      Object.entries(pendingPhotos).map(async ([field_key, f]) => ({ field_key, name: f.name, type: f.type, b64: await fileToB64(f) }))
+    );
+    const queued = {
+      id: clientId, form_id: form.id, form_version: form.version, data: values,
+      location_accuracy_m: gps?.accuracy ?? null, device_info: { ua: navigator.userAgent }, photos,
+      created_at: new Date().toISOString(),
+    };
+    if (!navigator.onLine || photos.length > 0) {
+      await outbox.add(queued);
+      window.dispatchEvent(new Event("outbox-changed"));
+      const n = await syncOutbox(supabase);
+      window.dispatchEvent(new Event("outbox-changed"));
+      if (n === 0) { setBusy(false); setOk(true); setMsg(t.savedOffline); setTimeout(() => router.push("/forms"), 2500); return; }
+    } else {
+      const { data: userData } = await supabase.auth.getUser();
+      const res = await supabase.from("submissions").insert({
+        form_id: form.id, form_version: form.version, data: values, submitted_by: userData.user!.id,
+        client_id: clientId, location_accuracy_m: gps?.accuracy ?? null, device_info: { ua: navigator.userAgent },
+      });
+      if (res.error) {
+        await outbox.add(queued);
+        window.dispatchEvent(new Event("outbox-changed"));
+        setBusy(false); setOk(true); setMsg(t.savedOffline); setTimeout(() => router.push("/forms"), 2500); return;
+      }
     }
+    setBusy(false);
+    setOk(true);
+    setTimeout(() => router.push("/submissions"), 1200);
   }
 
   if (!form) return <p className="text-gray-500">{t.loading}</p>;

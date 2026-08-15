@@ -1,0 +1,13 @@
+{
+  "name": "منصة الوزارة لجمع البيانات",
+  "short_name": "MEDSB",
+  "start_url": "/",
+  "display": "standalone",
+  "dir": "rtl",
+  "lang": "ar",
+  "background_color": "#ffffff",
+  "theme_color": "#0f4c5c",
+  "icons": [
+    { "src": "/logo.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+  ]
+}
