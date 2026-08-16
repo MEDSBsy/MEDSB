@@ -7,6 +7,7 @@ import { switchLocale, useI18n } from "@/components/I18nProvider";
 import { branding } from "@/lib/branding";
 import FieldRenderer, { type Values } from "@/components/FieldRenderer";
 import { publicOutbox, fileToB64, syncPublicOutbox } from "@/lib/offline";
+import { visibleFields, isInput } from "@/lib/fields";
 import type { FormField } from "@/lib/types";
 
 type PubForm = { id: string; title: string; description: string | null; schema: { fields: FormField[] }; version: number; collect_respondent: boolean; requires_code: boolean; code_ok: boolean };
@@ -49,7 +50,7 @@ export default function PublicSurveyPage({ params }: { params: Promise<{ token: 
 
   async function submit() {
     if (!form) return;
-    for (const f of form.schema.fields) {
+    for (const f of visibleFields(form.schema.fields, values).filter((x) => isInput(x.type))) {
       const v = values[f.key];
       if (f.required && (v == null || v === "" || (Array.isArray(v) && v.length === 0))) { setMsg(`${t.fillRequired}: ${f.label}`); return; }
     }
@@ -123,8 +124,8 @@ export default function PublicSurveyPage({ params }: { params: Promise<{ token: 
             <div><label className="label">{t.yourPhoneOpt}</label><input className="input" dir="ltr" value={phone} onChange={(e) => setPhone(e.target.value)} /></div>
           </div>
         )}
-        {form.schema.fields.map((f) => (
-          <FieldRenderer key={f.key} f={f} values={values} setVal={setVal} onPhoto={onPhoto} onGps={onGps} labels={{ capture: t.captureLocation, captured: t.locationCaptured }} />
+        {visibleFields(form.schema.fields, values).map((f) => (
+          <FieldRenderer key={f.key} f={f} values={values} setVal={setVal} onPhoto={onPhoto} onGps={onGps} labels={{ capture: t.captureLocation, captured: t.locationCaptured, yes: t.yes, no: t.no, clear: t.clear }} locale={locale} />
         ))}
         {msg && <p className="rounded-xl bg-[#f0e2e4] px-3 py-2 text-[13px] text-danger-dark">{msg}</p>}
         <button className="btn-primary w-full !py-3" onClick={submit} disabled={busy}>{busy ? t.loading : t.submit}</button>

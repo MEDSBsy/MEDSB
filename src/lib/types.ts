@@ -1,13 +1,10 @@
 export type FieldType =
-  | "text"
-  | "textarea"
-  | "number"
-  | "date"
-  | "select"
-  | "radio"
-  | "checkbox"
-  | "photo"
-  | "gps";
+  | "text" | "textarea" | "number" | "email" | "phone" | "date" | "time"
+  | "radio" | "checkbox" | "select" | "yesno" | "rating" | "likert"
+  | "photo" | "gps" | "signature" | "section" | "note";
+
+export type ConditionOp = "eq" | "neq" | "contains" | "gt" | "lt" | "answered" | "empty";
+export type Condition = { field: string; op: ConditionOp; value?: string };
 
 export type FormField = {
   key: string;
@@ -15,6 +12,13 @@ export type FormField = {
   type: FieldType;
   required: boolean;
   options?: string[];
+  hint?: string;
+  placeholder?: string;
+  min?: number;
+  max?: number;
+  scale?: number;          // rating stars count (default 5)
+  likertLabels?: string[]; // e.g. ["أوافق بشدة","أوافق","محايد","لا أوافق","لا أوافق بشدة"]
+  showIf?: Condition;      // conditional display
 };
 
 export type FormRow = {

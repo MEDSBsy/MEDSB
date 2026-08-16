@@ -20,6 +20,7 @@ export default {
         surface: "var(--surface)",
         ink: { DEFAULT: "var(--ink)", 2: "var(--ink-2)" },
         muted: "var(--muted)",
+        page: "var(--page)",
         line: "var(--line)",
       },
       fontFamily: {
