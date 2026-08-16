@@ -35,10 +35,12 @@ export default function LoginForm() {
         password,
         options: { data: { full_name: fullName } },
       });
-      if (error) setMsg(error.message);
+      if (error) { setMsg(error.message); }
       else {
-        setMsg(t.signupSuccess);
-        setMode("login");
+        // Accounts are auto-confirmed server-side; sign in immediately.
+        const { error: e2 } = await supabase.auth.signInWithPassword({ email, password });
+        if (e2) { setMsg(t.signupSuccess); setMode("login"); }
+        else { router.push("/"); router.refresh(); }
       }
     }
     setBusy(false);
