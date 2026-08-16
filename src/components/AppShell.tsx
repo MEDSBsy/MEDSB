@@ -13,7 +13,7 @@ import { Icon, type IconName } from "@/components/Icons";
 export type Profile = {
   id: string;
   full_name: string;
-  role: "admin" | "supervisor" | "collector";
+  role: "admin" | "user";
   is_active: boolean;
 };
 
@@ -23,15 +23,13 @@ export default function AppShell({ profile, children }: { profile: Profile; chil
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const isAdmin = profile.role === "admin";
-  const isStaff = profile.role !== "collector";
 
   const nav = [
     { href: "/", label: t.dashboard, icon: "grid", show: true },
     { href: "/map", label: t.map, icon: "map", show: true },
-    { href: "/reports", label: t.publicReports, icon: "alert", show: isStaff },
+    { href: "/reports", label: t.publicReports, icon: "alert", show: isAdmin },
     { href: "/forms", label: t.forms, icon: "form", show: true },
     { href: "/submissions", label: t.submissions, icon: "inbox", show: true },
-    { href: "/projects", label: t.projects, icon: "folder", show: isAdmin },
     { href: "/users", label: t.users, icon: "users", show: isAdmin },
   ].filter((n) => n.show) as { href: string; label: string; icon: IconName; show: boolean }[];
 

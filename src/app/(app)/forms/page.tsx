@@ -5,6 +5,8 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { useI18n } from "@/components/I18nProvider";
 import type { FormRow } from "@/lib/types";
+import ShareDialog from "@/components/ShareDialog";
+import { Icon } from "@/components/Icons";
 
 export default function FormsPage() {
   const { t } = useI18n();
@@ -12,6 +14,7 @@ export default function FormsPage() {
   const [forms, setForms] = useState<FormRow[]>([]);
   const [isAdmin, setIsAdmin] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [share, setShare] = useState<FormRow | null>(null);
 
   async function load() {
     const { data: userData } = await supabase.auth.getUser();
@@ -55,12 +58,8 @@ export default function FormsPage() {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h1 className="page-title">{t.forms}</h1>
-        {isAdmin && (
-          <Link href="/forms/builder/new" className="btn-primary">
-            + {t.newForm}
-          </Link>
-        )}
+        <h1 className="page-title">{isAdmin ? t.allSurveys : t.mySurveys} <span className="light">{forms.length}</span></h1>
+        <Link href="/forms/builder/new" className="btn-primary"><Icon name="plus" size={16} /> {t.newForm}</Link>
       </div>
       {loading ? (
         <p className="text-muted font-light">{t.loading}</p>
@@ -75,39 +74,25 @@ export default function FormsPage() {
                 {statusBadge(f.status)}
               </div>
               {f.description && <p className="text-sm text-muted">{f.description}</p>}
-              <p className="text-xs text-muted">
-                {f.schema?.fields?.length ?? 0} {t.fieldLabel}
+              <p className="text-[12px] font-light text-muted">
+                {f.schema?.fields?.length ?? 0} {t.fieldLabel} · <b className="font-bold text-ink">{f.response_count ?? 0}</b> {t.responses}
               </p>
               <div className="mt-auto flex flex-wrap gap-2">
-                {f.status === "published" && (
-                  <Link href={`/forms/${f.id}/fill`} className="btn-primary flex-1">
-                    {t.fill}
-                  </Link>
+                <button onClick={() => setShare(f)} className="btn-primary flex-1"><Icon name="external" size={14} /> {t.share}</button>
+                <Link href={`/submissions?form=${f.id}`} className="btn-outline">{t.submissions}</Link>
+                <Link href={`/forms/builder/${f.id}`} className="btn-outline">{t.edit}</Link>
+                {f.status === "published" ? (
+                  <button className="btn-outline" onClick={() => setStatus(f.id, "draft")}>{t.unpublish}</button>
+                ) : (
+                  <button className="btn-accent" onClick={() => setStatus(f.id, "published")}>{t.publish}</button>
                 )}
-                {isAdmin && (
-                  <>
-                    <Link href={`/forms/builder/${f.id}`} className="btn-outline">
-                      {t.edit}
-                    </Link>
-                    {f.status === "published" ? (
-                      <button className="btn-outline" onClick={() => setStatus(f.id, "draft")}>
-                        {t.unpublish}
-                      </button>
-                    ) : (
-                      <button className="btn-outline" onClick={() => setStatus(f.id, "published")}>
-                        {t.publish}
-                      </button>
-                    )}
-                    <button className="btn-danger" onClick={() => remove(f.id)}>
-                      {t.delete}
-                    </button>
-                  </>
-                )}
+                <button className="btn-danger" onClick={() => remove(f.id)}>{t.delete}</button>
               </div>
             </div>
           ))}
         </div>
       )}
+      {share && <ShareDialog form={share} onClose={() => setShare(null)} />}
     </div>
   );
 }

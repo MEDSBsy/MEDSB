@@ -73,3 +73,49 @@ export async function syncOutbox(supabase: import("@supabase/supabase-js").Supab
   }
   return n;
 }
+
+// ---------- Public (anonymous) survey outbox ----------
+export type QueuedPublicAnswer = {
+  id: string; token: string; code: string | null; data: Record<string, unknown>;
+  accuracy: number | null; device: Record<string, unknown>; name: string; phone: string;
+  photos: { field_key: string; name: string; type: string; b64: string }[]; created_at: string;
+};
+const PSTORE = "public-outbox";
+function popen(): Promise<IDBDatabase> {
+  return new Promise((res, rej) => {
+    const r = indexedDB.open("medsb-public", 1);
+    r.onupgradeneeded = () => r.result.createObjectStore(PSTORE, { keyPath: "id" });
+    r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error);
+  });
+}
+function ptx<T>(mode: IDBTransactionMode, fn: (s: IDBObjectStore) => IDBRequest<T>): Promise<T> {
+  return popen().then((db) => new Promise<T>((res, rej) => {
+    const req = fn(db.transaction(PSTORE, mode).objectStore(PSTORE));
+    req.onsuccess = () => res(req.result); req.onerror = () => rej(req.error);
+  }));
+}
+export const publicOutbox = {
+  add: (i: QueuedPublicAnswer) => ptx("readwrite", (s) => s.put(i)),
+  all: () => ptx<QueuedPublicAnswer[]>("readonly", (s) => s.getAll()),
+  remove: (id: string) => ptx("readwrite", (s) => s.delete(id)),
+};
+export async function syncPublicOutbox(supabase: import("@supabase/supabase-js").SupabaseClient): Promise<number> {
+  if (typeof navigator !== "undefined" && !navigator.onLine) return 0;
+  let n = 0;
+  for (const it of await publicOutbox.all()) {
+    const data = { ...it.data }; let ok = true;
+    for (const p of it.photos) {
+      const path = `public/${it.token}/${crypto.randomUUID()}-${p.name}`;
+      const { error } = await supabase.storage.from("attachments").upload(path, b64ToBlob(p.b64, p.type), { contentType: p.type });
+      if (error) { ok = false; break; }
+      data[p.field_key] = path;
+    }
+    if (!ok) continue;
+    const { error } = await supabase.rpc("submit_public_form", {
+      p_token: it.token, p_data: data, p_code: it.code, p_client_id: it.id, p_accuracy: it.accuracy, p_device: it.device, p_name: it.name, p_phone: it.phone,
+    });
+    if (!error) { await publicOutbox.remove(it.id); n++; }
+    else if (/invalid access code|form not available/.test(error.message)) { await publicOutbox.remove(it.id); }
+  }
+  return n;
+}

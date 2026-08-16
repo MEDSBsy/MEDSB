@@ -19,13 +19,18 @@ export type FormField = {
 
 export type FormRow = {
   id: string;
-  project_id: string;
+  project_id: string | null;
+  owner_id: string | null;
   title: string;
   description: string | null;
   schema: { fields: FormField[] };
   version: number;
   status: "draft" | "published" | "closed";
   created_at: string;
+  share_token: string;
+  access_code: string | null;
+  collect_respondent: boolean;
+  response_count: number;
 };
 
 export type ProjectRow = {
@@ -42,6 +47,8 @@ export type SubmissionRow = {
   status: "submitted" | "approved" | "rejected";
   submitted_by: string | null;
   submitted_at: string;
+  respondent_name?: string | null;
+  respondent_phone?: string | null;
 };
 
 export type SubmissionMapRow = {

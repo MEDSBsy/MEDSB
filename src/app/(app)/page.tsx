@@ -16,7 +16,7 @@ export default async function Dashboard() {
 
   const { data: { user } } = await supabase.auth.getUser();
   const { data: profile } = await supabase.from("profiles").select("full_name, role").eq("id", user!.id).single();
-  const isStaff = profile?.role !== "collector";
+  const isStaff = profile?.role === "admin";
   const isAdmin = profile?.role === "admin";
 
   const now = new Date();

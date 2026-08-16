@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { useI18n } from "@/components/I18nProvider";
-import type { FormField, FieldType, ProjectRow } from "@/lib/types";
+import type { FormField, FieldType } from "@/lib/types";
 
 const FIELD_TYPES: FieldType[] = [
   "text",
@@ -27,26 +27,23 @@ export default function FormBuilderPage() {
 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [projectId, setProjectId] = useState("");
-  const [projects, setProjects] = useState<ProjectRow[]>([]);
+  const [accessCode, setAccessCode] = useState("");
+  const [collectRespondent, setCollectRespondent] = useState(false);
   const [fields, setFields] = useState<FormField[]>([]);
   const [busy, setBusy] = useState(false);
   const [msg, setMsg] = useState("");
 
   useEffect(() => {
     (async () => {
-      const { data: projs } = await supabase.from("projects").select("*").eq("status", "active");
-      setProjects((projs as ProjectRow[]) ?? []);
       if (!isNew) {
         const { data } = await supabase.from("forms").select("*").eq("id", params.id).single();
         if (data) {
           setTitle(data.title);
           setDescription(data.description ?? "");
-          setProjectId(data.project_id);
+          setAccessCode(data.access_code ?? "");
+          setCollectRespondent(!!data.collect_respondent);
           setFields(data.schema?.fields ?? []);
         }
-      } else if (projs && projs.length > 0) {
-        setProjectId(projs[0].id);
       }
     })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -73,7 +70,7 @@ export default function FormBuilderPage() {
   }
 
   async function save() {
-    if (!title || !projectId) {
+    if (!title) {
       setMsg(t.fillRequired);
       return;
     }
@@ -82,7 +79,8 @@ export default function FormBuilderPage() {
     const payload = {
       title,
       description,
-      project_id: projectId,
+      access_code: accessCode.trim() || null,
+      collect_respondent: collectRespondent,
       schema: { fields },
       updated_at: new Date().toISOString(),
     };
@@ -91,7 +89,7 @@ export default function FormBuilderPage() {
       const { data: userData } = await supabase.auth.getUser();
       ({ error } = await supabase
         .from("forms")
-        .insert({ ...payload, created_by: userData.user!.id }));
+        .insert({ ...payload, created_by: userData.user!.id, owner_id: userData.user!.id }));
     } else {
       ({ error } = await supabase.from("forms").update(payload).eq("id", params.id));
     }
@@ -118,16 +116,14 @@ export default function FormBuilderPage() {
           <textarea className="input" rows={2} value={description} onChange={(e) => setDescription(e.target.value)} />
         </div>
         <div>
-          <label className="label">{t.project} *</label>
-          <select className="input" value={projectId} onChange={(e) => setProjectId(e.target.value)}>
-            <option value="">{t.selectProject}</option>
-            {projects.map((p) => (
-              <option key={p.id} value={p.id}>
-                {p.name}
-              </option>
-            ))}
-          </select>
+          <label className="label">{t.accessCode}</label>
+          <input className="input" dir="ltr" value={accessCode} onChange={(e) => setAccessCode(e.target.value)} placeholder="1234" />
+          <p className="mt-1 text-[12px] font-light text-muted">{t.accessCodeHint}</p>
         </div>
+        <label className="flex items-center gap-2 text-[14px]">
+          <input type="checkbox" checked={collectRespondent} onChange={(e) => setCollectRespondent(e.target.checked)} className="h-4 w-4 accent-[var(--brand)]" />
+          {t.collectRespondent}
+        </label>
       </div>
 
       <div className="space-y-3">

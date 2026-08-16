@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { useI18n } from "@/components/I18nProvider";
 import type { FormRow, SubmissionRow } from "@/lib/types";
@@ -8,8 +9,13 @@ import type { FormRow, SubmissionRow } from "@/lib/types";
 type Sub = SubmissionRow & { profiles: { full_name: string } | null };
 
 export default function SubmissionsPage() {
+  return <Suspense fallback={null}><SubmissionsInner /></Suspense>;
+}
+
+function SubmissionsInner() {
   const { t } = useI18n();
   const supabase = createClient();
+  const formFilter = useSearchParams().get("form");
   const [subs, setSubs] = useState<Sub[]>([]);
   const [forms, setForms] = useState<Record<string, FormRow>>({});
   const [isAdmin, setIsAdmin] = useState(false);
@@ -31,7 +37,7 @@ export default function SubmissionsPage() {
         .order("submitted_at", { ascending: false }),
       supabase.from("forms").select("*"),
     ]);
-    setSubs((s as Sub[]) ?? []);
+    setSubs(((s as Sub[]) ?? []).filter((x) => !formFilter || x.form_id === formFilter));
     setForms(Object.fromEntries(((f as FormRow[]) ?? []).map((x) => [x.id, x])));
     setLoading(false);
   }
@@ -60,7 +66,7 @@ export default function SubmissionsPage() {
         s.id,
         forms[s.form_id]?.title ?? s.form_id,
         s.status,
-        s.profiles?.full_name ?? "",
+        s.profiles?.full_name ?? s.respondent_name ?? "",
         s.submitted_at,
         ...[...keys].map((k) => {
           const v = (s.data ?? {})[k];
@@ -108,7 +114,7 @@ export default function SubmissionsPage() {
                 <div>
                   <p className="font-bold">{forms[s.form_id]?.title ?? "—"}</p>
                   <p className="text-xs text-muted">
-                    {t.submittedBy}: {s.profiles?.full_name ?? "—"} · {t.submittedAt}:{" "}
+                    {t.respondent}: {s.profiles?.full_name ?? s.respondent_name ?? t.anonymous}{s.respondent_phone ? ` (${s.respondent_phone})` : ""} · {t.submittedAt}:{" "}
                     {new Date(s.submitted_at).toLocaleString()}
                   </p>
                 </div>
@@ -120,7 +126,7 @@ export default function SubmissionsPage() {
                   >
                     {t.details}
                   </button>
-                  {isAdmin && s.status === "submitted" && (
+                  {s.status === "submitted" && (
                     <>
                       <button className="btn-primary !px-2 !py-1" onClick={() => review(s.id, "approved")}>
                         ✓ {t.approve}

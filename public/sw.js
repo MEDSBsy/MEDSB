@@ -1,4 +1,4 @@
-const CACHE = "medsb-shell-v1";
+const CACHE = "medsb-shell-v2";
 self.addEventListener("install", (e) => { self.skipWaiting(); });
 self.addEventListener("activate", (e) => { e.waitUntil(clients.claim()); });
 // Network-first for navigations & API, cache fallback for app shell/static assets.
@@ -13,6 +13,6 @@ self.addEventListener("fetch", (e) => {
   }
   if (req.mode === "navigate") {
     e.respondWith(fetch(req).then((r) => { caches.open(CACHE).then((c) => c.put(req, r.clone())); return r; })
-      .catch(async () => (await caches.match(req)) || (await caches.match("/forms")) || Response.error()));
+      .catch(async () => (await caches.match(req)) || (await caches.match("/forms")) || (await caches.match("/")) || Response.error()));
   }
 });
