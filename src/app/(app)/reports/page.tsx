@@ -72,64 +72,63 @@ export default function ReportsPage() {
   const publicLink = typeof window !== "undefined" ? `${window.location.origin}/report` : "/report";
 
   return (
-    <div className="flex h-[calc(100vh-7rem)] flex-col gap-3">
+    <div className="flex h-[calc(100vh-10rem)] min-h-[560px] flex-col gap-4">
       <div className="flex flex-wrap items-center gap-2">
-        <h1 className="me-auto text-xl font-bold">{t.publicReports}</h1>
-        <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value as ReportStatus | "all")} className="rounded-lg border px-2 py-1.5 text-sm">
+        <h1 className="page-title me-auto">{t.publicReports} <span className="light">{filtered.length}</span></h1>
+        <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value as ReportStatus | "all")} className="input !w-auto !py-2">
           <option value="all">{t.mapAll}</option>
           {(Object.keys(statusLabel) as ReportStatus[]).map((k) => <option key={k} value={k}>{statusLabel[k]}</option>)}
         </select>
-        <span className="text-sm text-gray-500">{filtered.length}</span>
         <select onChange={(e) => { if (e.target.value) { exportAs(e.target.value as "geojson" | "kml" | "shp"); e.target.value = ""; } }} disabled={filtered.length === 0}
-          className="rounded-lg bg-[var(--brand)] px-3 py-1.5 text-sm text-white disabled:opacity-40" defaultValue="">
+          className="btn-primary !py-2 text-[13px] disabled:opacity-40" defaultValue="">
           <option value="" disabled>{t.export}</option>
           <option value="geojson">GeoJSON</option>
           <option value="kml">KML</option>
           <option value="shp">Shapefile (.zip)</option>
         </select>
-        <button onClick={() => navigator.clipboard.writeText(publicLink)} className="rounded-lg border px-3 py-1.5 text-xs" title={publicLink}>
+        <button onClick={() => navigator.clipboard.writeText(publicLink)} className="btn-outline !py-2 text-[12px]" title={publicLink}>
           {t.shareReportLink} ⧉
         </button>
       </div>
 
-      <div className="grid flex-1 min-h-0 gap-3 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
-        <div className="min-h-[300px]">
-          {loading ? <p className="text-gray-500">{t.loading}</p> : (
+      <div className="grid flex-1 min-h-0 gap-4 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
+        <div className="card min-h-[300px] !p-2">
+          {loading ? <p className="text-muted font-light">{t.loading}</p> : (
             <SubmissionsMap rows={mapRows} rtl={locale === "ar"} labels={{ status: { submitted: t.pending, approved: t.verified, rejected: t.rejected }, details: t.viewDetails }}
               onSelect={(id) => setSelected(rows.find((r) => r.id === id) ?? null)} />
           )}
         </div>
-        <div className="min-h-0 overflow-auto rounded-xl border">
+        <div className="card min-h-0 overflow-auto !p-0">
           {selected ? (
-            <div className="p-4">
-              <button onClick={() => setSelected(null)} className="mb-2 text-sm text-gray-500">← {t.publicReports}</button>
-              <h2 className="text-lg font-semibold">{catLabel[selected.category]}</h2>
-              <p className="text-xs text-gray-500">{new Date(selected.created_at).toLocaleString()} · {statusLabel[selected.status]}</p>
+            <div className="p-5">
+              <button onClick={() => setSelected(null)} className="btn-ghost mb-3 !bg-white !py-1.5 text-[12px]">← {t.publicReports}</button>
+              <h2 className="text-[20px] font-bold">{catLabel[selected.category]}</h2>
+              <p className="card-sub">{new Date(selected.created_at).toLocaleString()} · {statusLabel[selected.status]}</p>
               <p className="mt-3 whitespace-pre-wrap text-sm">{selected.description}</p>
               {(selected.reporter_name || selected.reporter_phone) && (
-                <p className="mt-2 text-sm text-gray-600">{selected.reporter_name} <span dir="ltr">{selected.reporter_phone}</span></p>
+                <p className="mt-2 text-sm text-muted">{selected.reporter_name} <span dir="ltr">{selected.reporter_phone}</span></p>
               )}
-              <p className="mt-1 text-xs text-gray-500" dir="ltr">{selected.lat.toFixed(5)}, {selected.lng.toFixed(5)}{selected.location_accuracy_m ? ` (±${Math.round(selected.location_accuracy_m)}m)` : ""}</p>
-              {photoUrl && <img src={photoUrl} alt={t.photo} className="mt-3 max-h-64 rounded-lg" />}
-              <textarea value={note} onChange={(e) => setNote(e.target.value)} placeholder={t.reviewNote} rows={2} className="mt-3 w-full rounded-lg border px-3 py-2 text-sm" />
+              <p className="mt-1 text-xs text-muted" dir="ltr">{selected.lat.toFixed(5)}, {selected.lng.toFixed(5)}{selected.location_accuracy_m ? ` (±${Math.round(selected.location_accuracy_m)}m)` : ""}</p>
+              {photoUrl && <img src={photoUrl} alt={t.photo} className="mt-3 max-h-64 rounded-2xl" />}
+              <textarea value={note} onChange={(e) => setNote(e.target.value)} placeholder={t.reviewNote} rows={2} className="input mt-3" />
               <div className="mt-2 flex flex-wrap gap-2">
-                <button onClick={() => setStatus("verified")} className="rounded-lg bg-forest-400 px-3 py-1.5 text-sm text-white">{t.verify}</button>
-                <button onClick={() => setStatus("resolved")} className="rounded-lg bg-forest-700 px-3 py-1.5 text-sm text-white">{t.resolve}</button>
-                <button onClick={() => setStatus("rejected")} className="rounded-lg bg-umber-500 px-3 py-1.5 text-sm text-white">{t.reject}</button>
+                <button onClick={() => setStatus("verified")} className="rounded-xl btn-primary !py-2 text-[13px]">{t.verify}</button>
+                <button onClick={() => setStatus("resolved")} className="rounded-xl btn-accent !py-2 text-[13px]">{t.resolve}</button>
+                <button onClick={() => setStatus("rejected")} className="rounded-xl btn-danger !py-2 text-[13px]">{t.reject}</button>
               </div>
             </div>
           ) : (
-            <ul className="divide-y">
+            <ul className="divide-y divide-[var(--line)]">
               {filtered.map((r) => (
-                <li key={r.id} onClick={() => setSelected(r)} className="cursor-pointer p-3 hover:bg-gray-50">
+                <li key={r.id} onClick={() => setSelected(r)} className="cursor-pointer px-4 py-3 transition hover:bg-white">
                   <div className="flex items-center justify-between">
                     <span className="font-medium">{catLabel[r.category]}</span>
-                    <span className="text-xs text-gray-500">{new Date(r.created_at).toLocaleString()}</span>
+                    <span className="card-sub">{new Date(r.created_at).toLocaleString()}</span>
                   </div>
-                  <p className="line-clamp-2 text-sm text-gray-600">{r.description}</p>
+                  <p className="line-clamp-2 text-[13px] font-light text-muted">{r.description}</p>
                 </li>
               ))}
-              {filtered.length === 0 && !loading && <li className="p-6 text-center text-gray-500">—</li>}
+              {filtered.length === 0 && !loading && <li className="p-8 text-center text-muted">{t.noDataYet}</li>}
             </ul>
           )}
         </div>

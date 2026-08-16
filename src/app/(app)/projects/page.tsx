@@ -39,7 +39,7 @@ export default function ProjectsPage() {
 
   return (
     <div className="space-y-5">
-      <h1 className="text-2xl font-bold text-brand-dark">{t.projects}</h1>
+      <h1 className="page-title">{t.projects}</h1>
       <div className="card flex flex-col gap-3 sm:flex-row sm:items-end">
         <div className="flex-1">
           <label className="label">{t.title}</label>
@@ -57,11 +57,11 @@ export default function ProjectsPage() {
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {projects.map((p) => (
           <div key={p.id} className="card">
-            <h2 className="font-bold">{p.name}</h2>
-            {p.description && <p className="text-sm text-gray-600">{p.description}</p>}
+            <h2 className="section-title">{p.name}</h2>
+            {p.description && <p className="text-sm text-muted">{p.description}</p>}
           </div>
         ))}
-        {projects.length === 0 && <p className="text-gray-500">{t.noData}</p>}
+        {projects.length === 0 && <p className="text-muted">{t.noData}</p>}
       </div>
     </div>
   );

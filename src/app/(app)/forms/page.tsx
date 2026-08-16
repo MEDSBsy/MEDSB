@@ -45,17 +45,17 @@ export default function FormsPage() {
 
   const statusBadge = (s: FormRow["status"]) => {
     const map = {
-      draft: "bg-wheat-100 text-charcoal-700",
+      draft: "badge bg-white text-ink-2",
       published: "status-approved",
-      closed: "bg-red-100 text-umber-500",
+      closed: "status-rejected",
     };
-    return <span className={`badge ${map[s]}`}>{t[s === "closed" ? "closed" : s]}</span>;
+    return <span className={map[s]}>{t[s === "closed" ? "closed" : s]}</span>;
   };
 
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-brand-dark">{t.forms}</h1>
+        <h1 className="page-title">{t.forms}</h1>
         {isAdmin && (
           <Link href="/forms/builder/new" className="btn-primary">
             + {t.newForm}
@@ -63,19 +63,19 @@ export default function FormsPage() {
         )}
       </div>
       {loading ? (
-        <p className="text-gray-500">{t.loading}</p>
+        <p className="text-muted font-light">{t.loading}</p>
       ) : forms.length === 0 ? (
-        <p className="card text-gray-500">{t.noData}</p>
+        <div className="empty">{t.noData}</div>
       ) : (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {forms.map((f) => (
             <div key={f.id} className="card flex flex-col gap-3">
               <div className="flex items-start justify-between gap-2">
-                <h2 className="font-bold">{f.title}</h2>
+                <h2 className="section-title">{f.title}</h2>
                 {statusBadge(f.status)}
               </div>
-              {f.description && <p className="text-sm text-gray-600">{f.description}</p>}
-              <p className="text-xs text-gray-400">
+              {f.description && <p className="text-sm text-muted">{f.description}</p>}
+              <p className="text-xs text-muted">
                 {f.schema?.fields?.length ?? 0} {t.fieldLabel}
               </p>
               <div className="mt-auto flex flex-wrap gap-2">

@@ -58,18 +58,18 @@ export default function UsersPage() {
     load();
   }
 
-  if (loading) return <p className="text-gray-500">{t.loading}</p>;
+  if (loading) return <p className="text-muted font-light">{t.loading}</p>;
 
   return (
     <div className="space-y-4">
-      <h1 className="text-2xl font-bold text-brand-dark">{t.users}</h1>
+      <h1 className="page-title">{t.users}</h1>
       <div className="space-y-3">
         {users.map((u) => (
           <div key={u.id} className="card space-y-3">
             <div className="flex flex-wrap items-center justify-between gap-3">
               <div className="flex items-center gap-3">
-                <span className="font-semibold">{u.full_name || "—"}</span>
-                <span className={`badge ${u.is_active ? "status-approved" : "bg-red-100 text-umber-500"}`}>
+                <span className="font-bold">{u.full_name || "—"}</span>
+                <span className={`badge ${u.is_active ? "status-approved" : "status-rejected"}`}>
                   {u.is_active ? t.active : t.inactive}
                 </span>
               </div>
@@ -103,7 +103,7 @@ export default function UsersPage() {
                         className={`badge border transition ${
                           isMember
                             ? "border-brand bg-brand text-white"
-                            : "border-gray-300 bg-white text-gray-600 hover:border-brand"
+                            : "border-line bg-white text-muted hover:border-brand"
                         }`}
                       >
                         {p.name} {isMember ? "✓" : "+"}

@@ -105,7 +105,7 @@ export default function FormBuilderPage() {
 
   return (
     <div className="mx-auto max-w-3xl space-y-5">
-      <h1 className="text-2xl font-bold text-brand-dark">
+      <h1 className="page-title">
         {isNew ? t.newForm : t.edit}
       </h1>
       <div className="card space-y-4">
@@ -134,7 +134,7 @@ export default function FormBuilderPage() {
         {fields.map((f, i) => (
           <div key={f.key} className="card space-y-3">
             <div className="flex items-center justify-between">
-              <span className="badge bg-brand-light text-brand-dark">#{i + 1}</span>
+              <span className="badge bg-white text-brand">#{i + 1}</span>
               <div className="flex gap-1">
                 <button className="btn-outline !px-2 !py-1" onClick={() => moveField(i, -1)}>↑</button>
                 <button className="btn-outline !px-2 !py-1" onClick={() => moveField(i, 1)}>↓</button>

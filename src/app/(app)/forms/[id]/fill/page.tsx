@@ -109,12 +109,12 @@ export default function FillFormPage() {
     setTimeout(() => router.push("/submissions"), 1200);
   }
 
-  if (!form) return <p className="text-gray-500">{t.loading}</p>;
+  if (!form) return <p className="text-muted font-light">{t.loading}</p>;
 
   return (
     <div className="mx-auto max-w-2xl space-y-5">
-      <h1 className="text-2xl font-bold text-brand-dark">{form.title}</h1>
-      {form.description && <p className="text-gray-600">{form.description}</p>}
+      <h1 className="page-title">{form.title}</h1>
+      {form.description && <p className="text-muted">{form.description}</p>}
       <div className="card space-y-5">
         {form.schema.fields.map((f) => (
           <div key={f.key}>
@@ -201,7 +201,7 @@ export default function FillFormPage() {
           </div>
         ))}
         {msg && <p className="text-sm text-umber-500">{msg}</p>}
-        {ok && <p className="text-sm font-semibold text-forest-700">{t.sentSuccess} ✓</p>}
+        {ok && <p className="text-sm font-bold text-forest-700">{t.sentSuccess} ✓</p>}
         <button className="btn-primary w-full" onClick={submit} disabled={busy || ok}>
           {busy ? t.loading : t.submit}
         </button>

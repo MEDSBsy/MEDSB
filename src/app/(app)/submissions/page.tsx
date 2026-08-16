@@ -81,15 +81,15 @@ export default function SubmissionsPage() {
     const map = {
       submitted: "status-pending",
       approved: "status-approved",
-      rejected: "bg-red-100 text-umber-500",
+      rejected: "status-rejected",
     };
-    return <span className={`badge ${map[s]}`}>{t[s]}</span>;
+    return <span className={map[s]}>{t[s]}</span>;
   };
 
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-brand-dark">{t.submissions}</h1>
+        <h1 className="page-title">{t.submissions}</h1>
         {subs.length > 0 && (
           <button className="btn-outline" onClick={exportCsv}>
             ⬇ {t.exportCsv}
@@ -97,17 +97,17 @@ export default function SubmissionsPage() {
         )}
       </div>
       {loading ? (
-        <p className="text-gray-500">{t.loading}</p>
+        <p className="text-muted font-light">{t.loading}</p>
       ) : subs.length === 0 ? (
-        <p className="card text-gray-500">{t.noData}</p>
+        <div className="empty">{t.noData}</div>
       ) : (
         <div className="space-y-3">
           {subs.map((s) => (
             <div key={s.id} className="card">
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <div>
-                  <p className="font-semibold">{forms[s.form_id]?.title ?? "—"}</p>
-                  <p className="text-xs text-gray-500">
+                  <p className="font-bold">{forms[s.form_id]?.title ?? "—"}</p>
+                  <p className="text-xs text-muted">
                     {t.submittedBy}: {s.profiles?.full_name ?? "—"} · {t.submittedAt}:{" "}
                     {new Date(s.submitted_at).toLocaleString()}
                   </p>
@@ -133,14 +133,14 @@ export default function SubmissionsPage() {
                 </div>
               </div>
               {openId === s.id && (
-                <div className="mt-3 overflow-x-auto rounded-lg bg-gray-50 p-3">
+                <div className="mt-3 overflow-x-auto rounded-xl bg-white p-3">
                   <table className="w-full text-sm">
                     <tbody>
                       {(forms[s.form_id]?.schema.fields ?? []).map((f) => {
                         const v = (s.data ?? {})[f.key];
                         return (
-                          <tr key={f.key} className="border-b border-gray-100 last:border-0">
-                            <td className="py-1.5 pe-4 font-medium text-gray-600">{f.label}</td>
+                          <tr key={f.key} className="border-b border-[var(--line)] last:border-0">
+                            <td className="py-1.5 pe-4 font-medium text-muted">{f.label}</td>
                             <td className="py-1.5">
                               {typeof v === "object" && v !== null
                                 ? JSON.stringify(v)

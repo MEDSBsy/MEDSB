@@ -53,44 +53,43 @@ export default function MapPage() {
   const statusLabels: Record<string, string> = { submitted: t.submitted, approved: t.approved, rejected: t.rejected };
 
   return (
-    <div className="flex h-[calc(100vh-7rem)] flex-col gap-3">
+    <div className="flex h-[calc(100vh-10rem)] min-h-[560px] flex-col gap-4">
       <div className="flex flex-wrap items-center gap-2">
-        <h1 className="text-xl font-bold me-auto">{t.map}</h1>
-        <select value={formFilter} onChange={(e) => setFormFilter(e.target.value)} className="rounded-lg border px-2 py-1.5 text-sm">
+        <h1 className="page-title me-auto">{t.map} <span className="light">{filtered.length} {t.points}</span></h1>
+        <select value={formFilter} onChange={(e) => setFormFilter(e.target.value)} className="input !w-auto !py-2">
           <option value="all">{t.filterForm}: {t.mapAll}</option>
           {forms.map(([id, title]) => (
             <option key={id} value={id}>{title}</option>
           ))}
         </select>
-        <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)} className="rounded-lg border px-2 py-1.5 text-sm">
+        <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)} className="input !w-auto !py-2">
           <option value="all">{t.filterStatus}: {t.mapAll}</option>
           {Object.entries(statusLabels).map(([k, v]) => (
             <option key={k} value={k}>{v}</option>
           ))}
         </select>
         <select onChange={(e) => { if (e.target.value) { exportAs(e.target.value as "geojson" | "kml" | "shp"); e.target.value = ""; } }} disabled={filtered.length === 0}
-          className="rounded-lg bg-[var(--brand)] px-3 py-1.5 text-sm text-white disabled:opacity-40" defaultValue="">
+          className="btn-primary !py-2 text-[13px] disabled:opacity-40" defaultValue="">
           <option value="" disabled>{t.export}</option>
           <option value="geojson">GeoJSON</option>
           <option value="kml">KML (Google Earth)</option>
           <option value="shp">Shapefile (.zip)</option>
         </select>
-        <span className="text-sm text-gray-500">{filtered.length} {t.points}</span>
       </div>
 
-      <div className="flex flex-wrap gap-3 text-xs text-gray-600">
+      <div className="flex flex-wrap gap-2">
         {Object.entries(statusLabels).map(([k, v]) => (
-          <span key={k} className="inline-flex items-center gap-1">
-            <span className="inline-block h-3 w-3 rounded-full" style={{ background: STATUS_COLORS[k as keyof typeof STATUS_COLORS] }} /> {v}
+          <span key={k} className="badge-soft gap-1.5">
+            <span className="dot" style={{ background: STATUS_COLORS[k as keyof typeof STATUS_COLORS] }} /> {v}
           </span>
         ))}
       </div>
 
-      <div className="relative flex-1 min-h-[400px]">
+      <div className="card relative flex-1 min-h-[400px] !p-2">
         {loading ? (
-          <p className="text-gray-500">{t.loading}</p>
+          <p className="text-muted font-light">{t.loading}</p>
         ) : rows.length === 0 ? (
-          <div className="flex h-full items-center justify-center rounded-xl border border-dashed text-gray-500">{t.mapNoLocation}</div>
+          <div className="empty flex h-full items-center justify-center">{t.mapNoLocation}</div>
         ) : (
           <SubmissionsMap
             rows={filtered}
@@ -100,18 +99,18 @@ export default function MapPage() {
           />
         )}
         {selected && (
-          <div className="absolute inset-y-0 end-0 w-full max-w-sm overflow-auto bg-white p-4 shadow-xl">
+          <div className="absolute inset-y-2 end-2 w-full max-w-sm overflow-auto rounded-2xl bg-white p-5 shadow-xl">
             <div className="mb-2 flex items-center justify-between">
-              <h2 className="font-semibold">{selected.form_title}</h2>
-              <button onClick={() => setSelected(null)} className="text-gray-500">✕</button>
+              <h2 className="section-title">{selected.form_title}</h2>
+              <button onClick={() => setSelected(null)} className="icon-btn">✕</button>
             </div>
-            <p className="text-xs text-gray-500">{selected.project_name} · {statusLabels[selected.status]} · {new Date(selected.submitted_at).toLocaleString()}</p>
-            <table className="mt-3 w-full text-sm">
+            <p className="card-sub">{selected.project_name} · {statusLabels[selected.status]} · {new Date(selected.submitted_at).toLocaleString()}</p>
+            <table className="tbl mt-3">
               <tbody>
                 {Object.entries(selected.data).map(([k, v]) => (
-                  <tr key={k} className="border-b">
-                    <td className="py-1 pe-2 font-medium text-gray-600 align-top">{k}</td>
-                    <td className="py-1 break-words">{typeof v === "object" ? JSON.stringify(v) : String(v ?? "")}</td>
+                  <tr key={k}>
+                    <td className="!py-2 font-medium text-muted align-top">{k}</td>
+                    <td className="!py-2 break-words">{typeof v === "object" ? JSON.stringify(v) : String(v ?? "")}</td>
                   </tr>
                 ))}
               </tbody>

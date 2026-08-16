@@ -18,7 +18,9 @@ export default {
         umber: { 500: "#6b1f2a", 700: "#4a151e", 900: "#260f14" },
         charcoal: { 700: "#3d3a3b", 900: "#161616" },
         surface: "var(--surface)",
-        ink: "var(--ink)",
+        ink: { DEFAULT: "var(--ink)", 2: "var(--ink-2)" },
+        muted: "var(--muted)",
+        line: "var(--line)",
       },
       fontFamily: {
         sans: ["var(--font-qomra)", "Segoe UI", "Tahoma", "Arial", "sans-serif"],

@@ -54,7 +54,7 @@ export default function AppShell({ profile, children }: { profile: Profile; chil
             <Icon name="menu" />
           </button>
           <div className="pill flex items-center gap-2 px-3 py-2">
-            <Image src={branding.logo} alt="" width={30} height={30} className="rounded-lg" />
+            <Image src={branding.logo} alt="" width={30} height={30} className="rounded-xl" />
             <span className="text-[15px] font-bold text-ink">{locale === "ar" ? branding.shortAr : branding.shortEn}</span>
           </div>
 

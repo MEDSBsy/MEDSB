@@ -82,6 +82,9 @@ input::placeholder, textarea::placeholder { font-weight: 300; }
 .badge-soft { @apply inline-flex items-center rounded-full px-2.5 py-1 text-[12px] font-medium; background: var(--card); color: var(--ink-2); }
 .badge { @apply inline-flex items-center rounded-full px-2.5 py-1 text-[12px] font-medium; }
 .text-muted { color: var(--muted); }
+.label { @apply mb-1.5 block text-[13px] font-medium; color: var(--ink-2); }
+.section-title { @apply text-[15px] font-bold text-ink; }
+.empty { @apply rounded-2xl p-10 text-center text-[14px]; background: var(--surface); color: var(--muted); border: 1px dashed var(--line); }
 .icon-btn { @apply grid h-9 w-9 place-items-center rounded-full transition; background: var(--card); color: var(--ink-2); box-shadow: 0 1px 2px rgba(0,0,0,.04); }
 .icon-btn:hover { color: var(--brand); }
 
