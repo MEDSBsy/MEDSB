@@ -13,12 +13,10 @@
 2. أدخل البيانات أعلاه، فعّل "Also list tables with no geometry" غير ضروري. اضغط **Test Connection**.
 3. اضغط **Connect** ثم اختر:
    - `public.submissions_map` — إدخالات النماذج (عمود `geom`)
-   - `public.public_reports_map` — البلاغات المجتمعية (عمود `geom`)
 4. **Add**. الطبقات حيّة: أي إدخال جديد يظهر عند التحديث (F5) أو بتفعيل Auto-refresh من خصائص الطبقة → Rendering.
 
 ## تلوين مقترح
-- submissions_map: Categorized على `status` (submitted/approved/rejected).
-- public_reports_map: Categorized على `category` أو `status`.
+- submissions_map: Categorized على `form_title` أو `status`.
 
 ## ملاحظة أمنية
 حساب `qgis_reader` للقراءة فقط ولا يستطيع التعديل. لا تشاركه خارج الدائرة.

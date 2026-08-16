@@ -27,7 +27,6 @@ export default function AppShell({ profile, children }: { profile: Profile; chil
   const nav = [
     { href: "/", label: t.dashboard, icon: "grid", show: true },
     { href: "/map", label: t.map, icon: "map", show: true },
-    { href: "/reports", label: t.publicReports, icon: "alert", show: isAdmin },
     { href: "/forms", label: t.forms, icon: "form", show: true },
     { href: "/submissions", label: t.submissions, icon: "inbox", show: true },
     { href: "/users", label: t.users, icon: "users", show: isAdmin },
@@ -102,7 +101,6 @@ export default function AppShell({ profile, children }: { profile: Profile; chil
               ))}
             </div>
             <div className="rail mt-auto">
-              <Link href="/report" target="_blank" title={t.publicReport} className="rail-btn"><Icon name="megaphone" size={18} /></Link>
               <button onClick={logout} title={t.logout} className="rail-btn hover:text-danger"><Icon name="logout" size={18} /></button>
             </div>
           </aside>
